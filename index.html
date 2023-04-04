@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Game: Spot The Differences</title>
+	<link rel="stylesheet" href="./styles.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+	<div class="pageContainer">
+		<div class="gameTitle">Spot The Differences</div>
+		<div id="differencesCounter" style="color: lightgray">Differences found: Loading...</div>
+		<div class="winContainer 0" style="display: none; flex-direction: column; align-items: center; gap: 16px;">
+			<div style="color: lightgray; font-size: 2rem">You Won!</div>
+			<div class="replayButton" onclick="resetGame()">Replay</div>
+		</div>
+		<div class="gameContainer">
+			<div class="firstImageContainer">
+				<img src="./images/pic3a.png" usemap="#firstImageMap"/>
+				<map name="firstImageMap"></map>
+				<div class="itemContainer"></div>
+			</div>
+			<div class="secondImageContainer">
+				<img src="./images/alteredImage.png" usemap="#secondImageMap"/>
+				<map name="secondImageMap"></map>
+				<div class="itemContainer"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const itemContainers = document.querySelectorAll(".itemContainer")		
+		const differencesCounter = document.querySelector("#differencesCounter")
+		const winContainer = document.querySelector('.winContainer')
+
+		let foundDifferences = []
+		let gameDataLength
+
+		const getGameDataList = async () => {
+			return await $.getJSON("./gameData.json", dataList => {
+				return dataList
+			})
+		}
+
+		const checkIfAlreadyFound = (itemIndex) => {
+			if(foundDifferences.filter(item => item === itemIndex).length <= 0) {
+				foundDifferences.push(itemIndex)
+			}
+		}
+
+		const checkEndGame = () => {
+			if(foundDifferences.length === gameDataLength) {
+				winContainer.style.display = 'flex'
+				differencesCounter.innerHTML = `Differences Found: ${foundDifferences.length}/${gameDataLength}`
+			} else {
+				winContainer.style.display = 'none'
+				differencesCounter.innerHTML = `Differences Found: ${foundDifferences.length}/${gameDataLength}`
+			}
+		}
+
+		const handleClick = (index) => {
+			const itemList = document.querySelectorAll(`.item${index}`)
+			itemList.forEach(item => item.style.border = "solid 3px black")
+			checkIfAlreadyFound(index)
+			checkEndGame()
+		}
+
+		const resetGame = () => {
+			foundDifferences.length = 0
+			renderDifferencePoint()
+			checkEndGame()
+		}
+
+		const renderDifferencePoint = () => {
+			getGameDataList().then(dataList => {
+				//console.log(dataList)
+				gameDataLength = dataList.length
+				differencesCounter.innerHTML = `Differences found: 0/${dataList.length}`
+				itemContainers.forEach(container => {
+					container.innerHTML = dataList.map((item, index) => {			
+						return `
+							<div 
+								class="item${index}" 
+								onclick="handleClick(${index})" 
+								style="
+									position: absolute;
+									border: none;
+									border-radius: 4px;
+									left: ${item.xAxis}px;
+									top: ${item.yAxis}px;
+									width: ${item.width}px;
+									height: ${item.height}px;
+								"
+							></div>
+						`
+					}).join("")
+				})
+			})
+		}
+		renderDifferencePoint()
+
+	</script>
+</body>
+</html>

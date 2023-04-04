@@ -1,0 +1,51 @@
+body{
+	margin: 0;
+	padding: 0;
+	font-family: Helvetica;
+	background-color: rgb(19, 19, 19);
+	display: flex;
+	justify-content: center;
+}
+.gameTitle{
+	font-size: 2rem;
+	color: white;
+}
+.hidden {
+	display: none;
+}
+.pageContainer{
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(43, 42, 42);
+	padding: 0 120px 0 120px;
+	height: 100vh;
+}
+.gameContainer{
+	display: flex;
+	gap: 40px;
+	justify-content: center;
+	background-color: rgb(37, 37, 37);
+	padding: 48px;
+	border-radius: 8px;
+}
+.firstImageContainer, .secondImageContainer{
+	position: relative;
+	user-select: none;
+	cursor: pointer;
+}
+
+.replayButton {
+	background-color: rgb(102, 102, 102);
+	padding: 8px;
+	border-radius: 4px;
+	color: white;
+	cursor: pointer;
+	transition: ease 200ms;
+}
+.replayButton:hover {
+	transform: scale(120%);
+	background-color: rgb(63, 63, 63);
+}
